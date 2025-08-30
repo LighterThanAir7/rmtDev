@@ -15,6 +15,7 @@ import PaginationControls from "./PaginationControls.tsx";
 import {useDebounce, useJobItems} from "../lib/hooks.ts";
 import {Toaster} from "react-hot-toast";
 import {RESULTS_PER_PAGE} from "../lib/constants.ts";
+import {TPageDirection, TSortBy} from "../lib/types.ts";
 
 function App() {
 	// State
@@ -22,22 +23,34 @@ function App() {
 	const debouncedSearchText = useDebounce(searchText, 250);
 	const { jobItems, isLoading } = useJobItems(debouncedSearchText);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [sortBy, setSortBy] = useState<'relevant' | 'recent'>('relevant');
 
 	// Derived
 	const totalNumberOfResults = jobItems?.length || 0;
 	const totalNumberOfPages = Math.ceil(totalNumberOfResults / RESULTS_PER_PAGE);
+	const jobItemsSorted = [...(jobItems || [])]?.sort((a, b) => {
+		if (sortBy === 'relevant') {
+			return b.relevanceScore - a.relevanceScore;
+		} else {
+			return a.daysAgo - b.daysAgo;
+		}
+	})
 	const startSlice = currentPage * RESULTS_PER_PAGE - RESULTS_PER_PAGE;
 	const endSlice = currentPage * RESULTS_PER_PAGE;
-	const jobItemsSliced = jobItems?.slice(startSlice, endSlice) || [];
+	const jobItemsSortedAndSliced = jobItemsSorted.slice(startSlice, endSlice);
 
 	// Handlers
-	const handlePageChange = (direction: 'next' | 'prev') => {
+	const handlePageChange = (direction: TPageDirection) => {
 		if (direction === 'next') {
 			setCurrentPage((prevPage) => ++prevPage);
 		} else if (direction === 'prev') {
 			setCurrentPage((prevPage) => --prevPage);
 		}
-	}
+	};
+	const handleSortByChange = (sortBy: TSortBy) => {
+		setCurrentPage(1);
+		setSortBy(sortBy);
+	};
 
 	return (
 		<>
@@ -53,9 +66,9 @@ function App() {
 				<Sidebar>
 					<SidebarTop>
 						<ResultsCount totalNumberOfResults={totalNumberOfResults} />
-						<SortingControls />
+						<SortingControls sortBy={sortBy} onClick={handleSortByChange} />
 					</SidebarTop>
-					<JobList isLoading={isLoading} jobItems={jobItemsSliced} />
+					<JobList isLoading={isLoading} jobItems={jobItemsSortedAndSliced} />
 					<PaginationControls
 						currentPage={currentPage}
 						handlePageChange={handlePageChange}

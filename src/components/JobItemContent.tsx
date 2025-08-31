@@ -1,9 +1,10 @@
 import BookmarkIcon from "./BookmarkIcon";
 import Spinner from "./Spinner.tsx";
-import {useActiveId, useJobItem} from "../lib/hooks.ts";
+import {useJobItem} from "../lib/hooks.ts";
+import {useActiveIdContext} from "../context/ActiveIdContextProvider.tsx";
 
 export default function JobItemContent() {
-  const activeId = useActiveId();
+  const { activeId } = useActiveIdContext();
   const { jobItem, isLoading } = useJobItem(activeId);
 
   if (isLoading) {

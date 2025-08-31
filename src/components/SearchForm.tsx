@@ -1,11 +1,8 @@
-import React from "react";
+import {useSearchTextContext} from "../context/SearchTextContextProvider.tsx";
 
-type SearchFormProps = {
-  searchText: string,
-  setSearchText: React.Dispatch<React.SetStateAction<string>>
-}
+export default function SearchForm() {
+  const { searchText, handleChangeSearchText } = useSearchTextContext();
 
-export default function SearchForm({ searchText, setSearchText }: SearchFormProps) {
   return (
     <form
       onSubmit={(e) => {
@@ -21,7 +18,7 @@ export default function SearchForm({ searchText, setSearchText }: SearchFormProp
       <input
         value={searchText}
         onChange={(e) => {
-          setSearchText(e.target.value);
+          handleChangeSearchText(e.target.value);
         }}
         spellCheck="false"
         type="text"

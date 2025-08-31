@@ -1,10 +1,5 @@
-import {TSortBy} from "../lib/types.ts";
 import React from "react";
-
-type SortingControlsProps = {
-  sortBy: TSortBy,
-  onClick: (sortBy: TSortBy) => void
-}
+import {useJobItemsContext} from "../context/JobItemsContextProvider.tsx";
 
 type SortingButtonProps = {
   children: React.ReactNode,
@@ -12,14 +7,16 @@ type SortingButtonProps = {
   isActive: boolean
 }
 
-export default function SortingControls({ sortBy, onClick }: SortingControlsProps) {
+export default function SortingControls() {
+  const { sortBy, handleSortByChange } = useJobItemsContext();
+
   return (
     <section className="sorting">
       <i className="fa-solid fa-arrow-down-short-wide"></i>
-      <SortingButton onClick={() => onClick('relevant')} isActive={sortBy === 'relevant'}>
+      <SortingButton onClick={() => handleSortByChange('relevant')} isActive={sortBy === 'relevant'}>
         Relevance
       </SortingButton>
-      <SortingButton onClick={() => onClick('recent')} isActive={sortBy === 'recent'}>
+      <SortingButton onClick={() => handleSortByChange('recent')} isActive={sortBy === 'recent'}>
         Recent
       </SortingButton>
     </section>

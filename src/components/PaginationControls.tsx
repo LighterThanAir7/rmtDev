@@ -1,11 +1,6 @@
 import {ArrowLeftIcon, ArrowRightIcon} from "@radix-ui/react-icons";
 import {TPageDirection} from "../lib/types.ts";
-
-type PaginationControlsProps = {
-  currentPage: number,
-  handlePageChange: (direction: TPageDirection) => void
-  totalNumberOfPages: number,
-};
+import {useJobItemsContext} from "../context/JobItemsContextProvider.tsx";
 
 type PaginationButtonProps = {
   direction: TPageDirection,
@@ -13,7 +8,9 @@ type PaginationButtonProps = {
   onClick: () => void
 };
 
-export default function PaginationControls({ currentPage, handlePageChange, totalNumberOfPages }: PaginationControlsProps) {
+export default function PaginationControls() {
+  const { currentPage, handlePageChange, totalNumberOfPages } = useJobItemsContext();
+
   return (
     <section className="pagination">
       {

@@ -1,9 +1,7 @@
-type ResultsCountProps = {
-  totalNumberOfResults: number;
-}
+import {useJobItemsContext} from "../context/JobItemsContextProvider.tsx";
 
-export default function ResultsCount({ totalNumberOfResults }: ResultsCountProps) {
-
+export default function ResultsCount() {
+  const { totalNumberOfResults } = useJobItemsContext();
 
   return <p className="count"><strong>{totalNumberOfResults}</strong> results</p>;
 }

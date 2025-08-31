@@ -1,7 +1,7 @@
 import JobListItem from "./JobListItem.tsx";
 import type { JobItem } from "../lib/types.ts";
 import Spinner from "./Spinner.tsx";
-import {useActiveId} from "../lib/hooks.ts";
+import {useActiveIdContext} from "../context/ActiveIdContextProvider.tsx";
 
 type JobListProps = {
   isLoading: boolean,
@@ -9,7 +9,7 @@ type JobListProps = {
 }
 
 export default function JobList({ isLoading, jobItems }: JobListProps) {
-  const activeId = useActiveId();
+  const { activeId } = useActiveIdContext();
 
   return (
     <ul className="job-list">

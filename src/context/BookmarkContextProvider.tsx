@@ -1,4 +1,4 @@
-import React, {createContext, useContext} from "react";
+import React, {createContext, useCallback, useContext} from "react";
 import {useJobItems, useLocalStorage} from "../lib/hooks.ts";
 import {JobItemExpanded} from "../lib/types.ts";
 
@@ -19,13 +19,13 @@ export default function BookmarkContextProvider({ children }: BookmarkContextPro
 	const [bookmarkedIds, setBookmarkedIds] = useLocalStorage<number[]>('bookmarkedIds', []);
 	const { jobItems, isLoading } = useJobItems(bookmarkedIds);
 
-	const handleToggleBookmark = (id: number) => {
+	const handleToggleBookmark = useCallback((id: number) => {
 		if (bookmarkedIds.includes(id)) {
 			setBookmarkedIds((prev) => prev.filter((bookmarkId) => bookmarkId !== id));
 		} else {
 			setBookmarkedIds((prev) => [...prev, id]);
 		}
-	}
+	}, [bookmarkedIds, setBookmarkedIds]);
 
 	return (
 		<BookmarksContext.Provider value={

@@ -15,8 +15,6 @@ type JobItemsApiResonse = {
 	jobItems: JobItem[];
 }
 
-// ------------------------------------------------------------------------------ //
-
 const fetchJobItem = async (id: number): Promise<JobItemApiResponse> => {
 	const response = await fetch(`${BASE_API_URL}/${id}`);
 	if (!response.ok) {
@@ -56,8 +54,6 @@ const fetchJobItems = async (searchText: string): Promise<JobItemsApiResonse> =>
 	return await response.json();
 }
 
-// ------------------------------------------------------------------------------ //
-
 export function useJobItems(ids: number[]) {
 	const results = useQueries({
 		queries: ids.map(id => ({
@@ -78,8 +74,6 @@ export function useJobItems(ids: number[]) {
 
 	return { jobItems, isLoading }
 }
-
-// ------------------------------------------------------------------------------ //
 
 export function useSearchQuery(searchText: string) {
 	const { data, isInitialLoading } = useQuery(

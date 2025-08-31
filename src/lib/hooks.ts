@@ -1,8 +1,8 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {JobItem, JobItemExpanded} from "./types.ts";
 import {BASE_API_URL} from "./constants.ts";
-import {useQuery} from "@tanstack/react-query";
-import {handleError} from "./utilities.ts";
+import {useQueries, useQuery} from "@tanstack/react-query";
+import {handleError, isDefined} from "./utilities.ts";
 
 type JobItemApiResponse = {
 	public: boolean
@@ -14,6 +14,8 @@ type JobItemsApiResonse = {
 	sorted: boolean,
 	jobItems: JobItem[];
 }
+
+// ------------------------------------------------------------------------------ //
 
 const fetchJobItem = async (id: number): Promise<JobItemApiResponse> => {
 	const response = await fetch(`${BASE_API_URL}/${id}`);
@@ -54,7 +56,32 @@ const fetchJobItems = async (searchText: string): Promise<JobItemsApiResonse> =>
 	return await response.json();
 }
 
-export function useJobItems(searchText: string) {
+// ------------------------------------------------------------------------------ //
+
+export function useJobItems(ids: number[]) {
+	const results = useQueries({
+		queries: ids.map(id => ({
+			queryKey: ['job-item', id],
+			queryFn: () => fetchJobItem(id),
+			staleTime: 1000 * 60 * 60,
+			refetchOnWindowFocus: false,
+			retry: false,
+			enabled: Boolean(id),
+			onError: handleError
+		}))
+	});
+
+	const jobItems = results
+		.map(result => result.data?.jobItem)
+		.filter(isDefined)
+	const isLoading = results.some(result => result.isLoading);
+
+	return { jobItems, isLoading }
+}
+
+// ------------------------------------------------------------------------------ //
+
+export function useSearchQuery(searchText: string) {
 	const { data, isInitialLoading } = useQuery(
 		['job-items', searchText],
 		() => searchText ? fetchJobItems(searchText) : null,
@@ -103,4 +130,16 @@ export function useActiveId() {
 	}, []);
 
 	return activeId;
+}
+
+export function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
+	const [value, setValue] = useState(() =>
+		JSON.parse(localStorage.getItem(key) || JSON.stringify(initialValue))
+	);
+
+	useEffect(() => {
+		localStorage.setItem(key, JSON.stringify(value));
+	}, [value, key]);
+
+	return [value, setValue];
 }

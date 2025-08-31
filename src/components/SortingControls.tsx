@@ -1,4 +1,5 @@
 import {TSortBy} from "../lib/types.ts";
+import React from "react";
 
 type SortingControlsProps = {
   sortBy: TSortBy,

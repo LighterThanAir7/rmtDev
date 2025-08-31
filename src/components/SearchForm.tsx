@@ -1,3 +1,5 @@
+import React from "react";
+
 type SearchFormProps = {
   searchText: string,
   setSearchText: React.Dispatch<React.SetStateAction<string>>

@@ -1,3 +1,5 @@
+import React from "react";
+
 type SidebarProps = {
   children: React.ReactNode
 }
